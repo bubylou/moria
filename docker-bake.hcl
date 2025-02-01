@@ -3,7 +3,7 @@ group "default" {
 }
 
 group "release-all" {
-  targets = ["release", "release-trim"]
+  targets = ["release-trim"]
 }
 
 variable "REPO" {
