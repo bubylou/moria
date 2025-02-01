@@ -21,7 +21,7 @@ ENV APP_ID=3349480 \
 	PGID=1000
 
 # Create inital user, group, and directories
-RUN if [ "$USER" != "steam" ]; then mkdir -p /app /config /data \
+RUN if [ "$USER" != "steam" ]; then mkdir -p "${APP_DIR}" "${CONFIG_DIR}" "${DATA_DIR}" \
 	&& groupmod -g ${PGID} ${GROUP} \
 	&& useradd -u ${PUID} -m ${USER} \
 	&& chown  ${USER}:${GROUP} -R /app /config /data; fi
@@ -30,10 +30,16 @@ USER ${USER}
 # Copy over default min config
 COPY ./MoriaServerConfig.ini ${CONFIG_DIR}/MoriaServerConfig.ini
 
-# Update SteamCMD and setup wine
-RUN mkdir -p "${APP_DIR}" "${CONFIG_DIR}" "${DATA_DIR}" \
-	&& steamcmd +login anonymous +quit \
+# Update SteamCMD and game dependencies
+RUN steamcmd +login anonymous +quit \
 	&& xvfb-run winetricks -q vcrun2019
+
+# Install dedicated server files
+ARG RELEASE="full"
+RUN if [ "$RELEASE" != "trim" ]; then \
+	steamcmd +force_install_dir "$APP_DIR" +@sSteamCmdForcePlatformType windows \
+	+login "$STEAM_USERNAME" "$STEAM_PASSWORD" "$STEAM_GUARD" \
+	+app_update "$APP_ID" validate +quit; fi
 
 VOLUME [ "${APP_DIR}", "${CONFIG_DIR}", "${DATA_DIR}" ]
 
