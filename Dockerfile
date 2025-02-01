@@ -21,9 +21,9 @@ ENV APP_ID=3349480 \
 	PGID=1000
 
 # Create inital user, group, and directories
-RUN mkdir -p "${APP_DIR}" "${CONFIG_DIR}" "${DATA_DIR}" \
+RUN mkdir -p "${APP_DIR}" "${CONFIG_DIR}" "${DATA_DIR}" && \
 	if [ "$USER" != "steam" ]; then \
-	&& groupmod -g ${PGID} ${GROUP} \
+	groupmod -g ${PGID} ${GROUP} \
 	&& useradd -u ${PUID} -m ${USER} \
 	&& chown  ${USER}:${GROUP} -R "${APP_DIR}" "${CONFIG_DIR}" "${DATA_DIR}"; \
 	fi
