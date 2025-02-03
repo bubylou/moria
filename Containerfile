@@ -13,28 +13,14 @@ ENV APP_ID=3349480 \
 	UPDATE_ON_START=false \
 	RESET_SEED=false \
 	STEAM_USERNAME=anonymous \
-	GAME_PORT=7777 \
-	LISTEN_PORT=7777 \
-	USER=steam \
-	GROUP=users \
-	PUID=1000 \
-	PGID=1000
-
-# Create inital user, group, and directories
-RUN mkdir -p "${APP_DIR}" "${CONFIG_DIR}" "${DATA_DIR}" && \
-	if [ "$USER" != "steam" ]; then \
-	groupmod -g ${PGID} ${GROUP} \
-	&& useradd -u ${PUID} -m ${USER} \
-	&& chown  ${USER}:${GROUP} -R "${APP_DIR}" "${CONFIG_DIR}" "${DATA_DIR}"; \
-	fi
-USER ${USER}
+	LISTEN_PORT=7777
 
 # Copy over default min config
 COPY ./MoriaServerConfig.ini ${CONFIG_DIR}/MoriaServerConfig.ini
 
 # Update SteamCMD and game dependencies
 RUN steamcmd +login anonymous +quit \
-	&& xvfb-run winetricks -q vcrun2019
+	&& xvfb-run winetricks -q vcrun2022
 
 # Install dedicated server files
 ARG RELEASE="full"
@@ -45,10 +31,6 @@ RUN if [ "$RELEASE" != "trim" ]; then \
 
 VOLUME [ "${APP_DIR}", "${CONFIG_DIR}", "${DATA_DIR}" ]
 
-# Check UDP connection on GAME_PORT
-HEALTHCHECK --interval=30s --start-period=30s --timeout=10s \
-	CMD ncat -uz 127.0.0.1 ${GAME_PORT}
-
-EXPOSE ${GAME_PORT}/udp ${LISTEN_PORT}/tcp
-ADD docker-entrypoint.sh /docker-entrypoint.sh
-ENTRYPOINT [ "/docker-entrypoint.sh" ]
+EXPOSE ${LISTEN_PORT}/udp
+ADD entrypoint.sh /entrypoint.sh
+ENTRYPOINT [ "/entrypoint.sh" ]
