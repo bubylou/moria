@@ -11,25 +11,6 @@ if [[ "$RESET_SEED" == "true" ]]; then
     rm -f "$APP_DIR/Moria/Saved/Config/InviteSeed.cfg"
 fi
 
-SETTINGS_FILE="$APP_DIR/MoriaServerConfig.ini"
-if [[ -f $SETTINGS_FILE ]]; then
-    echo "Existing configuration file found, moving to $CONFIG_DIR"
-    mv $SETTINGS_FILE "$CONFIG_DIR/MoriaServerConfig.ini"
-fi
-
-SAVE_DIR="$APP_DIR/Moria/Saved"
-if [[ -d $SAVE_DIR ]]; then
-    echo "Moving existing save to $DATA_DIR"
-    mv "$APP_DIR/Moria" "$DATA_DIR"
-else
-    echo "No existing save file found"
-    mkdir -p "$APP_DIR/Moria"
-fi
-
-ln -s "$DATA_DIR" $SAVE_DIR
-ln -s "$CONFIG_DIR/MoriaServerConfig.ini" $SETTINGS_FILE
-sed -i "s/ListenPort=7777/ListenPort=$LISTEN_PORT/" $SETTINGS_FILE
-
 echo "Starting fake screen"
 rm -f /tmp/.X0-lock 2>&1
 Xvfb :0 -screen 0 1024x768x24 -nolisten tcp &
