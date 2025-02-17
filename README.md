@@ -21,23 +21,20 @@ These variables modify some of the game configuration options and storage locati
 | Variable           | Description                                                 | Default Values  | Allowed Values |
 |--------------------|-------------------------------------------------------------|-----------------|----------------|
 | APP_DIR            | Application files directory                                 | /app/moria      | directory      |
-| CONFIG_DIR         | Configuration file directory                                | /config/moria   | directory      |
-| DATA_DIR           | Save data directory                                         | /data/moria     | directory      |
 | LISTEN_PORT        | Port number for listener.                                   | 7777            | 1024-65535     |
 
 ## Examples
 
-### Podman Run
+### CLI Run
 
 ```bash
-podman run --name moria \
+docker run --name moria \
     -p 7777:7777/udp \
-    -v ./moria:/data/moria \
-    --restart unless-stopped \
+    -v moria-app:/app/moria \
     ghcr.io/bubylou/moria:latest
 ```
 
-### Podman Compose
+### Compose File
 
 ```yml
 services:
@@ -52,11 +49,7 @@ services:
     ports:
       - 7777:7777/udp
     volumes:
-      - moria-app:/app/moria # game server files
-      - moria-config:/config/moria # moria config files
-      - moria-data:/data/moria # game/world save
+      - moria-app:/app/moria
 volumes:
   moria-app:
-  moria-config:
-  moria-data:
 ```

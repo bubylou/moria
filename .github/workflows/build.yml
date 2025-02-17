@@ -8,9 +8,6 @@ on:
   pull_request:
     branches: [ "main" ]
 
-env:
-  IMAGE_NAME: bubylou/moria
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -51,3 +48,10 @@ jobs:
           PUSH: ${{ github.event_name != 'pull_request' && '--push' || '' }}
           TAG: ${{ github.ref_name }}
         run: earthly --ci $PLATFORMS $PUSH +all --tag $TAG
+
+      - name: Docker Hub Description
+        if: github.event_name != 'pull_request'
+        uses: peter-evans/dockerhub-description@v4
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
