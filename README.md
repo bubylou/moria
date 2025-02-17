@@ -25,17 +25,16 @@ These variables modify some of the game configuration options and storage locati
 
 ## Examples
 
-### Podman Run
+### CLI Run
 
 ```bash
-podman run --name moria \
+docker run --name moria \
     -p 7777:7777/udp \
     -v moria-app:/app/moria \
-    --restart unless-stopped \
     ghcr.io/bubylou/moria:latest
 ```
 
-### Podman Compose
+### Compose File
 
 ```yml
 services:
