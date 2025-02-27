@@ -15,7 +15,7 @@ build:
     ENV STEAM_USERNAME=anonymous
     ENV LISTEN_PORT=7777
 
-    COPY ./MoriaServerConfig.ini "$CONFIG_DIR/MoriaServerConfig.ini"
+    COPY ./MoriaServerConfig.ini "$APP_DIR/MoriaServerConfig.ini"
     RUN mkdir -p "$APP_DIR" \
         && steamcmd +login anonymous +quit \
         && xvfb-run winetricks -q vcrun2022
